@@ -1,5 +1,5 @@
 {
-  "name": "name-shahr-shohrat",
+  "name": "esm-famil-multiplayer-online",
   "version": "1.0.0",
   "description": "Real-time multiplayer online Persian party game (اسم فامیل) with Arcade UI, Web Audio API and Lucide Icons",
   "main": "server.js",
