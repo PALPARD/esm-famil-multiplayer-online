@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow">
+  <title>نام شهر شهرت | بازی دورهمی آنلاین</title>
+  
+  <!-- Anti-Flash Theme Script -->
+  <script>
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Vazirmatn Persian Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'system-ui', 'Tahoma', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      font-family: 'Vazirmatn', system-ui, Tahoma, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    input {
+      user-select: text;
+    }
+    /* Tactile 3D Buttons */
+    .tactile-btn {
+      transition: all 0.08s ease-in-out;
+      transform: translateY(0);
+    }
+    .tactile-btn:active {
+      transform: translateY(3px);
+    }
+    .tactile-primary {
+      background-color: #4f46e5;
+      border-bottom: 4px solid #3730a3;
+    }
+    .tactile-primary:active {
+      border-bottom-width: 1px;
+    }
+    .tactile-danger {
+      background-color: #e11d48;
+      border-bottom: 5px solid #9f1239;
+    }
+    .tactile-danger:active {
+      border-bottom-width: 1px;
+    }
+    .tactile-success {
+      background-color: #059669;
+      border-bottom: 4px solid #065f46;
+    }
+    .tactile-success:active {
+      border-bottom-width: 1px;
+    }
+    .tactile-secondary {
+      border-bottom: 4px solid #cbd5e1;
+    }
+    .dark .tactile-secondary {
+      border-bottom: 4px solid #0f172a;
+    }
+    .tactile-secondary:active {
+      border-bottom-width: 1px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-[#f3f4f8] dark:bg-[#0a0e17] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between transition-colors duration-150">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="border-b-2 border-slate-200 dark:border-slate-800/90 bg-white/95 dark:bg-[#121826]/95 backdrop-blur-md sticky top-0 z-40 px-4 py-3 transition-colors">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <!-- Brand Logo / Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-md border-b-2 border-indigo-800">
+          ن
+        </div>
+        <div>
+          <h1 class="text-base font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+            نام شهر شهرت
+          </h1>
+          <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 block -mt-0.5">بازی آنلاین و چندنفره دورهمی</span>
+        </div>
+      </div>
+
+      <!-- Action Badges, Volume & Toggles -->
+      <div class="flex items-center gap-2">
+        <!-- Room Code Badge if inside room -->
+        <button id="nav-room-badge" onclick="copyRoomCode()" class="hidden cursor-pointer items-center gap-2 bg-slate-100 dark:bg-slate-800/80 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-400 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 transition" title="برای کپی کد کلیک کنید">
+          <span class="text-slate-400 text-[11px]">اتاق:</span>
+          <span id="nav-room-code" class="tracking-widest font-mono font-black text-indigo-600 dark:text-indigo-400">---</span>
+          <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
+
+        <!-- Audio Volume Slider & Mute Toggle -->
+        <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-xl">
+          <button id="btn-sound-toggle" onclick="toggleSound()" class="text-slate-700 dark:text-slate-300 transition" title="قطع / وصل صدا">
+            <i id="sound-icon-el" data-lucide="volume-2" class="w-4 h-4"></i>
+          </button>
+          <input type="range" id="sound-volume-slider" min="0" max="100" value="80" oninput="changeVolume(this.value)" class="w-14 sm:w-16 h-1.5 accent-indigo-600 rounded-lg cursor-pointer" title="تنظیم میزان صدا">
+        </div>
+
+        <!-- Theme Toggle (Light / Dark) -->
+        <button id="btn-theme-toggle" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 transition" title="تغییر تم (دارک / لایت)">
+          <i id="theme-icon-el" data-lucide="moon" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN VIEWPORT CONTAINER ================= -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col justify-center">
+
+    <!-- ================= VIEW 1: HOME (JOIN / CREATE) ================= -->
+    <div id="view-home" class="w-full max-w-md mx-auto space-y-5">
+      <div class="text-center space-y-1">
+        <h2 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">ورود به مسابقه دورهمی</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">نام و کاراکتر دلخواهت را انتخاب کن و وارد بازی شو</p>
+      </div>
+
+      <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-5 transition-colors">
+        <!-- Nickname Input with Vector Avatar Selector -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">نام و کاراکتر شما:</label>
+          <div class="flex items-center gap-3">
+            <button type="button" id="btn-change-avatar" onclick="cycleAvatar()" class="group flex-shrink-0 cursor-pointer p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition" title="برای تغییر کاراکتر کلیک کنید">
+              <div id="player-avatar-container" class="w-12 h-12 flex items-center justify-center">
+                <!-- Injected by avatars.js -->
+              </div>
+            </button>
+            <div class="flex-1">
+              <input type="text" id="input-player-name" placeholder="نام یا لقب شما (مثلاً: طاها)" maxlength="18"
+                class="w-full bg-slate-50 dark:bg-slate-900/90 border-2 border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 transition">
+              <span id="player-avatar-name" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 mt-1 block mr-1">روباه زیرک</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chunky Tactile Buttons: Create vs Join -->
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button onclick="openCreateModal()" class="tactile-btn tactile-primary py-3 px-4 rounded-2xl text-white font-black text-sm shadow-md flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>ساخت اتاق</span>
+          </button>
+          <button onclick="openJoinSection()" class="tactile-btn tactile-secondary py-3 px-4 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 font-black text-sm text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            <span>ورود به اتاق</span>
+          </button>
+        </div>
+
+        <!-- Join Room Sub-Form -->
+        <div id="join-room-section" class="hidden pt-4 border-t-2 border-slate-100 dark:border-slate-800/80 space-y-3">
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-400">کد ۵ حرفی اتاق را وارد کنید:</label>
+          <div class="flex gap-2">
+            <input type="text" id="input-room-code" placeholder="XYZ89" maxlength="6"
+              class="flex-1 uppercase font-mono tracking-widest text-center text-lg font-black bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 transition">
+            <button onclick="joinRoomFromInput()" class="tactile-btn tactile-primary px-5 py-2 rounded-2xl text-white font-bold text-xs flex items-center gap-1.5">
+              <span>پیوستن</span>
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Global Leaderboard Button -->
+        <div class="pt-2">
+          <button onclick="openLeaderboardModal()" class="w-full py-2.5 px-4 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-2 border-amber-500/30 font-black text-xs flex items-center justify-center gap-2 transition">
+            <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i>
+            <span>مشاهده لیدربرد و رده‌بندی کل بازیکنان</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 2: LOBBY ================= -->
+    <div id="view-lobby" class="hidden w-full max-w-xl mx-auto space-y-5">
+      <!-- Room Code & Sharing Card -->
+      <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-5 text-center space-y-4 shadow-sm transition-colors">
+        <div class="flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+          <i data-lucide="link" class="w-3.5 h-3.5"></i>
+          <span>کد و لینک دعوت به مسابقه</span>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <!-- Big Clickable Room Code -->
+          <div onclick="copyRoomCode()" class="cursor-pointer group flex items-center gap-2 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-500 px-6 py-2.5 rounded-2xl transition active:scale-[0.98]" title="برای کپی کردن کد کلیک کنید">
+            <span id="lobby-code-display" class="font-mono text-3xl font-black text-indigo-600 dark:text-indigo-400 tracking-widest">---</span>
+            <i data-lucide="copy" class="w-4 h-4 text-slate-400 group-hover:text-indigo-500"></i>
+          </div>
+
+          <!-- Direct Copy Buttons -->
+          <div class="flex items-center gap-2">
+            <button onclick="copyRoomCode()" class="tactile-btn tactile-secondary px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>کپی کد</span>
+            </button>
+            <button onclick="copyInviteLink()" class="tactile-btn tactile-primary px-4 py-2.5 rounded-2xl text-white text-xs font-bold flex items-center gap-1.5">
+              <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+              <span>کپی لینک دعوت</span>
+            </button>
+          </div>
+        </div>
+        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400">لینک بالا را بفرست برای دوستانت تا مستقیم با گوشی یا کامپیوتر وارد لابی شوند.</p>
+      </div>
+
+      <!-- Player List & Settings Overview -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <!-- Joined Players Card with Cumulative Scores -->
+        <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-4 space-y-3 shadow-sm transition-colors">
+          <div class="flex items-center justify-between border-b-2 border-slate-100 dark:border-slate-800/80 pb-2">
+            <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i data-lucide="users" class="w-4 h-4 text-indigo-500"></i>
+              <span>بازیکنان حاضر (<span id="lobby-player-count">0</span>)</span>
+            </span>
+          </div>
+          <ul id="lobby-players-list" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+            <!-- Dynamic players rendered with Vector Avatars and cumulative score -->
+          </ul>
+        </div>
+
+        <!-- Room Settings Overview & Host Controls -->
+        <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-4 flex flex-col justify-between space-y-4 shadow-sm transition-colors">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between border-b-2 border-slate-100 dark:border-slate-800/80 pb-2">
+              <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                <i data-lucide="sliders" class="w-4 h-4 text-indigo-500"></i>
+                <span>قوانین و فیلدها</span>
+              </span>
+              <button id="btn-host-edit-settings" onclick="openSettingsModal()" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-bold hidden flex items-center gap-1">
+                <i data-lucide="pencil" class="w-3 h-3"></i>
+                <span>تغییر</span>
+              </button>
+            </div>
+            
+            <div class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+              <div class="flex justify-between">
+                <span class="text-slate-500">تعداد دورها:</span>
+                <span id="lobby-setting-rounds" class="font-bold text-slate-900 dark:text-white">۵ دور</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">زمان هر دور:</span>
+                <span id="lobby-setting-time" class="font-bold text-slate-900 dark:text-white">۶۰ ثانیه</span>
+              </div>
+              <div>
+                <span class="text-slate-500 block mb-1">فیلدهای بازی:</span>
+                <div id="lobby-categories-chips" class="flex flex-wrap gap-1.5">
+                  <!-- Chips -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Start Button (Host only) -->
+          <div id="lobby-host-controls" class="pt-2">
+            <button id="btn-start-game" onclick="startGame()" class="tactile-btn tactile-primary w-full py-3.5 px-4 rounded-2xl text-white font-black text-base shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+              <span>شروع مسابقه!</span>
+            </button>
+            <p id="lobby-waiting-notice" class="text-center text-xs font-medium text-slate-500 dark:text-slate-400 hidden mt-2 flex items-center justify-center gap-1.5">
+              <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
+              <span>منتظر میزبان برای شروع بازی...</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 3: LETTER REVEAL ================= -->
+    <div id="view-letter-reveal" class="hidden text-center space-y-6 my-auto">
+      <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+        <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+        <span>دور <span id="reveal-round-num">۱</span></span>
+      </div>
+      
+      <h3 class="text-xl font-black text-slate-900 dark:text-white">حرف انتخابی این دور:</h3>
+
+      <!-- Massive Chunky Game Token -->
+      <div class="w-36 h-36 mx-auto rounded-3xl bg-white dark:bg-[#121826] border-4 border-indigo-500 shadow-xl flex items-center justify-center transition-colors">
+        <span id="reveal-letter" class="text-7xl font-black text-indigo-600 dark:text-indigo-400">؟</span>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400">سریع کلمات را بنویسید؛ اولین کسی که کامل کند دکمه استپ را می‌زند!</p>
+    </div>
+
+    <!-- ================= VIEW 4: PLAYING PHASE ================= -->
+    <div id="view-playing" class="hidden w-full max-w-3xl mx-auto space-y-4">
+      <!-- Status Top Bar: Letter, Round, Timer -->
+      <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-4 flex items-center justify-between shadow-sm transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-600 border-b-4 border-indigo-800 text-white font-black text-3xl flex items-center justify-center shadow-md">
+            <span id="play-current-letter">س</span>
+          </div>
+          <div>
+            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">حرف مسابقه</span>
+            <span class="text-sm font-black text-slate-900 dark:text-white">دور <span id="play-current-round">۱</span> از <span id="play-total-rounds">۵</span></span>
+          </div>
+        </div>
+
+        <!-- Timer -->
+        <div class="text-center">
+          <div class="flex items-center gap-1.5 font-mono text-3xl font-black text-slate-900 dark:text-white">
+            <i data-lucide="clock" class="w-6 h-6 text-indigo-500"></i>
+            <span id="play-timer-seconds">60</span>
+          </div>
+          <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">زمان باقی‌مانده</span>
+        </div>
+      </div>
+
+      <!-- Categories Inputs Grid -->
+      <div id="play-inputs-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Chunky Tactile STOP Buzzer -->
+      <div class="pt-2">
+        <button id="btn-stop-action" onclick="triggerStopAction()" class="tactile-btn tactile-danger w-full py-4 rounded-2xl text-white font-black text-xl shadow-lg flex items-center justify-center gap-3">
+          <i data-lucide="octagon-alert" class="w-6 h-6"></i>
+          <span>استپ! تموم کردم</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= STOP OVERLAY COUNTDOWN ================= -->
+    <div id="stop-overlay-banner" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center space-y-4">
+      <div class="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center animate-bounce shadow-xl">
+        <i data-lucide="siren" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-2xl font-black text-white">
+        <span id="stop-caller-name" class="text-amber-400">طاها</span> استپ زد!
+      </h3>
+      <div class="text-8xl font-mono font-black text-amber-400" id="stop-seconds-left">5</div>
+      <p class="text-xs text-slate-300">مسابقه متوقف شد! شمارش معکوس تا فاز بررسی کلمات...</p>
+    </div>
+
+    <!-- ================= VIEW 5: VOTING & DISPUTE PHASE ================= -->
+    <div id="view-voting" class="hidden w-full max-w-3xl mx-auto space-y-5">
+      <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm transition-colors text-center sm:text-right">
+        <div>
+          <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center justify-center sm:justify-start gap-2">
+            <i data-lucide="scale" class="w-5 h-5 text-indigo-500"></i>
+            <span>فاز بررسی و داوری کلمات</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">کلمات را بررسی کنید؛ در صورت کلمه فیک یا اشتباه روی دکمه رد بزنید.</p>
+        </div>
+
+        <div id="voting-host-actions" class="hidden">
+          <button onclick="finalizeScores()" class="tactile-btn tactile-success py-2.5 px-5 rounded-2xl text-white font-black text-xs flex items-center gap-1.5 shadow-md">
+            <i data-lucide="check-check" class="w-4 h-4"></i>
+            <span>ثبت نهایی و مشاهده نتایج</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories Evaluation List -->
+      <div id="voting-categories-container" class="space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ================= VIEW 6: ROUND SUMMARY ================= -->
+    <div id="view-round-summary" class="hidden w-full max-w-md mx-auto space-y-5">
+      <div class="text-center space-y-1">
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white">نتایج و امتیازات دور <span id="summary-round-num">۱</span></h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">جدول رده‌بندی مسابقه تا این لحظه</p>
+      </div>
+
+      <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-5 space-y-4 shadow-sm transition-colors">
+        <ul id="summary-scoreboard-list" class="space-y-2.5">
+          <!-- Dynamic Leaderboard -->
+        </ul>
+
+        <!-- Action buttons to continue -->
+        <div id="summary-host-actions" class="pt-3 border-t-2 border-slate-100 dark:border-slate-800/80 space-y-2">
+          <button onclick="returnToLobby()" class="tactile-btn tactile-primary w-full py-3.5 rounded-2xl text-white font-black text-sm flex items-center justify-center gap-2 shadow-md">
+            <span>بازگشت به لابی برای دور بعد</span>
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 7: GAME OVER & PODIUM ================= -->
+    <div id="view-game-over" class="hidden w-full max-w-md mx-auto space-y-5 text-center">
+      <div class="space-y-1">
+        <div class="w-16 h-16 mx-auto rounded-3xl bg-amber-500/10 border-2 border-amber-500/40 text-amber-500 flex items-center justify-center shadow-lg">
+          <i data-lucide="trophy" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-2xl font-black text-slate-900 dark:text-white">پایان مسابقه</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">جدول نهایی قهرمانان</p>
+      </div>
+
+      <div id="game-over-podium" class="space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div id="game-over-host-actions" class="hidden pt-2 flex flex-col gap-2">
+        <button onclick="returnToLobby()" class="tactile-btn tactile-primary py-3 px-6 rounded-2xl text-white font-black text-sm flex items-center justify-center gap-2 mx-auto">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>ادامه بازی در همین اتاق</span>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL: GLOBAL LEADERBOARD ================= -->
+  <div id="modal-leaderboard" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl transition-colors">
+      <div class="flex items-center justify-between border-b-2 border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="font-black text-base text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i>
+          <span>رده‌بندی کل بازیکنان (لیدربرد)</span>
+        </h3>
+        <button onclick="closeLeaderboardModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="max-h-80 overflow-y-auto pr-1">
+        <ul id="global-leaderboard-list" class="space-y-2">
+          <!-- Dynamic Leaderboard Items -->
+        </ul>
+      </div>
+
+      <p class="text-[11px] text-center text-slate-400">امتیازات تمام مسابقات به صورت خودکار ثبت و ذخیره می‌شوند.</p>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: HOST SETTINGS ================= -->
+  <div id="modal-settings" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#121826] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl transition-colors">
+      <div class="flex items-center justify-between border-b-2 border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="font-black text-sm text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="sliders" class="w-4 h-4 text-indigo-500"></i>
+          <span>تنظیمات قوانین و فیلدهای مسابقه</span>
+        </h3>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Rounds & Time -->
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">تعداد دورها:</label>
+          <select id="modal-select-rounds" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-800 dark:text-slate-200 font-bold focus:outline-none focus:border-indigo-500">
+            <option value="3">۳ دور</option>
+            <option value="5" selected>۵ دور</option>
+            <option value="7">۷ دور</option>
+            <option value="10">۱۰ دور</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">زمان هر دور:</label>
+          <select id="modal-select-time" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2.5 text-slate-800 dark:text-slate-200 font-bold focus:outline-none focus:border-indigo-500">
+            <option value="45">۴۵ ثانیه</option>
+            <option value="60" selected>۶۰ ثانیه</option>
+            <option value="90">۹۰ ثانیه</option>
+            <option value="120">۱۲۰ ثانیه</option>
+            <option value="0">نامحدود (فقط استپ)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Categories Checkboxes -->
+      <div>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">انتخاب فیلدهای بازی:</label>
+        <div id="modal-categories-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1">
+          <!-- Dynamic Checkboxes -->
+        </div>
+
+        <!-- Add Custom Field -->
+        <div class="flex gap-2 mt-3">
+          <input type="text" id="input-custom-category" placeholder="فیلد جدید (مثلاً: سریال، فیلم...)" maxlength="20"
+            class="flex-1 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500">
+          <button type="button" onclick="addCustomCategory()" class="tactile-btn tactile-secondary px-3.5 py-2 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-slate-200">
+            + افزودن
+          </button>
+        </div>
+      </div>
+
+      <button onclick="saveSettingsModal()" class="tactile-btn tactile-primary w-full py-3 rounded-2xl text-white font-black text-xs shadow-md">
+        تایید و ذخیره تنظیمات
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-box" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs px-5 py-2.5 rounded-2xl shadow-xl transition transform opacity-0 pointer-events-none translate-y-3 font-bold border-2 border-slate-700 dark:border-slate-200 flex items-center gap-2">
+    <i data-lucide="info" class="w-4 h-4"></i>
+    <span id="toast-text">پیام</span>
+  </div>
+
+  <!-- Scripts: Lucide Icons, Vector Avatars, Sounds, Socket, Main App -->
+  <script src="/lucide.min.js"></script>
+  <script src="/avatars.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/sounds.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
