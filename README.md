@@ -7,11 +7,11 @@
 
 ---
 
-[English](#-english) | [راهنمای فارسی](#-راهنمای-فارسی)
+[English](#english) | [راهنمای فارسی](#راهنمای-فارسی)
 
 ---
 
-## 🇬🇧 English
+## English
 
 A modern, real-time multiplayer online Persian party game (*Esm Famil* / اسم فامیل) built with Node.js, Express, Socket.IO, and Tailwind CSS.
 
@@ -60,7 +60,7 @@ The game server will start on `http://localhost:3000`.
 
 ---
 
-## 🇮🇷 راهنمای فارسی
+## راهنمای فارسی
 
 یک پلتفرم مدرن و جذاب برای بازی نوستالژیک و آنلاین **اسم فامیل چندنفره** با طراحی مدرن آرکید، افکت‌های صوتی داخلی و قابلیت اجرای تحت وب بدون نیاز به نصب هیچ‌گونه اپلیکیشن اضافی.
 
