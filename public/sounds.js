@@ -181,6 +181,27 @@ class SoundEngine {
       offset += item.d * 0.85;
     });
   }
+
+  playKickAlert() {
+    if (this.muted || this.volume <= 0.01) return;
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    [0, 0.15].forEach(startOffset => {
+      const t = now + startOffset;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(420, t);
+      osc.frequency.linearRampToValueAtTime(130, t + 0.12);
+      gain.gain.setValueAtTime(0.4 * this.volume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.12);
+    });
+  }
 }
 
 window.sounds = new SoundEngine();

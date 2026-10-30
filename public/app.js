@@ -513,6 +513,7 @@ socket.on('room_updated', (room) => {
 });
 
 socket.on('returned_to_lobby', () => {
+  isFieldWritingActive = false;
   switchView('lobby');
   if (currentRoom) {
     updateLobbyView(currentRoom);
@@ -542,6 +543,8 @@ socket.on('round_started', ({ round, totalRounds, letter, roundTime, categories 
   switchView('playing');
   currentCategories = categories;
   currentAnswers = {};
+  isFieldWritingActive = true;
+  cheatReportSent = false;
 
   document.getElementById('play-current-letter').innerText = letter;
   document.getElementById('play-current-round').innerText = round;
@@ -560,6 +563,7 @@ socket.on('round_started', ({ round, totalRounds, letter, roundTime, categories 
       <label class="block text-xs font-black text-slate-800 dark:text-slate-200">${escapeHtml(cat)}:</label>
       <input type="text" data-cat="${escapeHtml(cat)}" data-idx="${index}"
         placeholder="${escapeHtml(letterHint)}"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
         class="cat-input w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 transition">
     `;
     grid.appendChild(card);
@@ -569,6 +573,25 @@ socket.on('round_started', ({ round, totalRounds, letter, roundTime, categories 
   if (inputs.length > 0) inputs[0].focus();
 
   inputs.forEach(input => {
+    // Anti-Cheat: Prevent Paste
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      if (window.sounds) window.sounds.playVote(false);
+      showToast('⚠️ چسباندن متن (Paste) مسدود است! کلمه را دستی تایپ کنید.', 3000);
+    });
+
+    // Anti-Cheat: Prevent Drop
+    input.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (window.sounds) window.sounds.playVote(false);
+    });
+
+    // Anti-Cheat: Prevent Right-Click Context Menu
+    input.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      showToast('⚠️ راست‌کلیک در حین مسابقه غیرفعال است.', 2000);
+    });
+
     input.addEventListener('input', () => {
       const cat = input.dataset.cat;
       currentAnswers[cat] = input.value;
@@ -578,6 +601,20 @@ socket.on('round_started', ({ round, totalRounds, letter, roundTime, categories 
     });
 
     input.addEventListener('keydown', (e) => {
+      // Anti-Cheat: Block Ctrl+V / Cmd+V / Shift+Insert
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'v' || e.code === 'KeyV')) {
+        e.preventDefault();
+        if (window.sounds) window.sounds.playVote(false);
+        showToast('⚠️ کپی-پیست در مسابقه غیرمجاز است!', 2500);
+        return;
+      }
+      if (e.shiftKey && e.key === 'Insert') {
+        e.preventDefault();
+        if (window.sounds) window.sounds.playVote(false);
+        showToast('⚠️ کپی-پیست در مسابقه غیرمجاز است!', 2500);
+        return;
+      }
+
       if (e.key === 'Enter') {
         e.preventDefault();
         const nextIdx = parseInt(input.dataset.idx) + 1;
@@ -639,6 +676,7 @@ socket.on('time_up_collect_answers', () => {
 
 // Phase: Voting & Dispute Screen (Democratic voting system)
 socket.on('voting_started', ({ letter, evaluation, stopper, players }) => {
+  isFieldWritingActive = false;
   switchView('voting');
   window.sounds.playVote(true);
 
@@ -798,6 +836,7 @@ function returnToLobby() {
 
 // Phase: Round Summary
 socket.on('round_summary_started', ({ round, roundScores, players, isFinalRound }) => {
+  isFieldWritingActive = false;
   switchView('summary');
   window.sounds.playSuccess();
   document.getElementById('summary-round-num').innerText = round;
@@ -844,6 +883,7 @@ socket.on('round_summary_started', ({ round, roundScores, players, isFinalRound 
 
 // Phase: Game Over
 socket.on('game_over', ({ players }) => {
+  isFieldWritingActive = false;
   switchView('gameOver');
   window.sounds.playWinner();
 
@@ -886,3 +926,86 @@ socket.on('game_over', ({ players }) => {
 
   refreshLucideIcons();
 });
+
+// ================= ANTI-CHEAT DETECTION ENGINE =================
+let isFieldWritingActive = false;
+let cheatReportSent = false;
+
+function reportTabSwitch(detail) {
+  if (!isFieldWritingActive || cheatReportSent) return;
+  cheatReportSent = true;
+  isFieldWritingActive = false;
+  socket.emit('cheat_tab_switched', { detail: detail });
+}
+
+// 1. Visibility change (tab switch, minimizing browser, home button on phone)
+document.addEventListener('visibilitychange', () => {
+  if (isFieldWritingActive && document.visibilityState === 'hidden') {
+    reportTabSwitch('خروج از تب بازی یا جابجایی برنامه');
+  }
+});
+
+// 2. Window blur (leaving window focus on desktop)
+window.addEventListener('blur', () => {
+  if (!isFieldWritingActive) return;
+  setTimeout(() => {
+    if (isFieldWritingActive && (document.hidden || !document.hasFocus())) {
+      reportTabSwitch('از دست رفتن تمرکز پنجره مسابقه');
+    }
+  }, 700);
+});
+
+// 3. Global paste blocker during active gameplay
+window.addEventListener('paste', (e) => {
+  if (isFieldWritingActive) {
+    e.preventDefault();
+    if (window.sounds) window.sounds.playVote(false);
+    showToast('⚠️ کپی-پیست در حین مسابقه غیرمجاز است!', 2500);
+  }
+});
+
+// Broadcast notification when any player is kicked
+socket.on('player_kicked_announcement', ({ playerName, reason }) => {
+  if (window.sounds) window.sounds.playKickAlert();
+  showLiveKickBanner(playerName, reason);
+});
+
+// Cheater was kicked by server
+socket.on('kicked_by_anticheat', ({ reason }) => {
+  isFieldWritingActive = false;
+  currentRoom = null;
+  switchView('home');
+  if (window.sounds) window.sounds.playKickAlert();
+  showKickedModal(reason);
+});
+
+function showLiveKickBanner(playerName, reason) {
+  const banner = document.getElementById('live-kick-banner');
+  const desc = document.getElementById('live-kick-desc');
+  if (!banner || !desc) return;
+  desc.innerText = `بازیکن «${playerName}» به دلیل خروج از صفحه و سرچ اخراج شد!`;
+  banner.classList.remove('hidden', '-translate-y-6', 'opacity-0');
+  banner.classList.add('translate-y-0', 'opacity-100');
+  refreshLucideIcons();
+  setTimeout(() => {
+    banner.classList.remove('translate-y-0', 'opacity-100');
+    banner.classList.add('-translate-y-6', 'opacity-0');
+    setTimeout(() => banner.classList.add('hidden'), 350);
+  }, 4500);
+}
+
+function showKickedModal(reason) {
+  const modal = document.getElementById('modal-kicked');
+  const reasonEl = document.getElementById('modal-kicked-reason');
+  if (reasonEl && reason) reasonEl.innerText = reason;
+  if (modal) {
+    modal.classList.remove('hidden');
+    refreshLucideIcons();
+  }
+}
+
+function closeKickedModal() {
+  const modal = document.getElementById('modal-kicked');
+  if (modal) modal.classList.add('hidden');
+  switchView('home');
+}

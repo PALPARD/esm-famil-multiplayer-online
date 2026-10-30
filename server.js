@@ -438,6 +438,58 @@ io.on('connection', (socket) => {
     room.answers[socket.id] = cleanAnswers;
   });
 
+  // Anti-Cheat: Tab-Switch / Out-of-Page Detection during active gameplay
+  socket.on('cheat_tab_switched', ({ detail } = {}) => {
+    const room = rooms[socket.roomCode];
+    if (!room) return;
+
+    // Only kick if actively playing or in stop countdown
+    if (room.gameState !== 'PLAYING' && room.gameState !== 'STOP_COUNTDOWN') return;
+
+    const player = room.players.find(p => p.id === socket.id);
+    if (!player) return;
+
+    const kickedPlayerName = player.name;
+    const kickedSocketId = socket.id;
+
+    console.log(`[AntiCheat] Kicking ${kickedPlayerName} (${kickedSocketId}) from room ${room.code} for: ${detail || 'Tab Switch'}`);
+
+    // 1. Kick the player and notify them
+    socket.emit('kicked_by_anticheat', {
+      reason: 'خروج از تب بازی یا جابجایی بین برنامه‌ها در حین زمان مسابقه'
+    });
+
+    // 2. Remove player from active room data
+    room.players = room.players.filter(p => p.id !== kickedSocketId);
+    delete room.playerProgress[kickedSocketId];
+    delete room.answers[kickedSocketId];
+    socket.leave(room.code);
+    socket.roomCode = null;
+
+    // 3. Announce to all remaining players in the room
+    io.to(room.code).emit('player_kicked_announcement', {
+      playerName: kickedPlayerName,
+      reason: 'خروج از صفحه بازی و تلاش برای سرچ در تب دیگر'
+    });
+
+    // 4. Migrate host if the kicked player was the host
+    if (room.hostId === kickedSocketId) {
+      const nextHost = room.players.find(p => p.connected);
+      if (nextHost) {
+        nextHost.isHost = true;
+        room.hostId = nextHost.id;
+      }
+    }
+
+    // 5. Update room state or cleanup
+    if (room.players.length === 0) {
+      if (room.timerInterval) clearInterval(room.timerInterval);
+      delete rooms[room.code];
+    } else {
+      io.to(room.code).emit('room_updated', sanitizeRoom(room));
+    }
+  });
+
   socket.on('press_stop', () => {
     if (!checkRateLimit(socket)) return;
     const room = rooms[socket.roomCode];
@@ -628,6 +680,14 @@ io.on('connection', (socket) => {
 
       if (room.gameState === 'LOBBY') {
         room.players = room.players.filter(p => p.id !== socket.id);
+      } else if (room.gameState === 'PLAYING' || room.gameState === 'STOP_COUNTDOWN') {
+        room.players = room.players.filter(p => p.id !== socket.id);
+        delete room.playerProgress[socket.id];
+        delete room.answers[socket.id];
+        io.to(room.code).emit('player_kicked_announcement', {
+          playerName: player.name,
+          reason: 'بستن تب یا قطع ارتباط در حین مسابقه'
+        });
       }
 
       if (room.hostId === socket.id) {

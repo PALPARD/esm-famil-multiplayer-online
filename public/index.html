@@ -345,6 +345,15 @@
         </div>
       </div>
 
+      <!-- Anti-Cheat Status Strip -->
+      <div class="bg-rose-500/10 border-2 border-rose-500/20 rounded-2xl px-4 py-2 flex items-center justify-between text-xs font-bold text-rose-600 dark:text-rose-400 shadow-sm">
+        <div class="flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500 shrink-0"></i>
+          <span>سیستم ضدچیت فعال: تعویض تب یا خروج از صفحه = اخراج قطعی</span>
+        </div>
+        <span class="text-[10px] bg-rose-500/15 border border-rose-500/30 px-2.5 py-0.5 rounded-lg text-rose-600 dark:text-rose-400">Paste مسدود</span>
+      </div>
+
       <!-- Categories Inputs Grid -->
       <div id="play-inputs-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <!-- Rendered by JS -->
@@ -520,6 +529,36 @@
 
       <button onclick="saveSettingsModal()" class="tactile-btn tactile-primary w-full py-3 rounded-2xl text-white font-black text-xs shadow-md">
         تایید و ذخیره تنظیمات
+      </button>
+    </div>
+  </div>
+
+  <!-- Live Cheater Kick Alert Banner (Broadcast to room) -->
+  <div id="live-kick-banner" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md bg-rose-600 text-white p-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border-2 border-rose-400 font-bold transition-all transform -translate-y-6 opacity-0">
+    <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+      <i data-lucide="shield-alert" class="w-6 h-6 text-yellow-300"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="text-xs font-black tracking-wide text-yellow-200">🚨 اخراج متقلب از بازی!</div>
+      <div class="text-[11px] text-white truncate" id="live-kick-desc">بازیکن فلان به دلیل خروج از تب اخراج شد.</div>
+    </div>
+  </div>
+
+  <!-- Modal: You Were Kicked For Cheating -->
+  <div id="modal-kicked" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#121826] border-2 border-rose-500 rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl animate-in fade-in zoom-in-95">
+      <div class="w-16 h-16 rounded-3xl bg-rose-500/10 border-2 border-rose-500/30 text-rose-500 flex items-center justify-center mx-auto shadow-inner">
+        <i data-lucide="shield-alert" class="w-8 h-8"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">شما از مسابقه اخراج شدید!</h3>
+        <p id="modal-kicked-reason" class="text-xs text-rose-500 font-bold">خروج از تب بازی یا جابجایی بین برنامه‌ها</p>
+      </div>
+      <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        در حین زمان تایپ مسابقه اسم فامیل، برای حفظ عدالت و جلوگیری از جستجو در گوگل، خروج از تب بازی یا جابجایی پنجره ممنوع است.
+      </p>
+      <button onclick="closeKickedModal()" class="tactile-btn tactile-danger w-full py-3 rounded-2xl text-white font-bold text-xs shadow-md">
+        متوجه شدم، بازگشت به لابی
       </button>
     </div>
   </div>
